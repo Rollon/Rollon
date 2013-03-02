@@ -52,6 +52,7 @@ public class FeedsActivity extends Activity {
                 Feed selected = feeds[position];
                 Intent i  = new Intent(activity, RssFeedReaderActivity.class);
                 i.setData(Uri.parse(selected.getUrl().toString()));
+                i.putExtra("FEED_NAME", selected.getName());
                 startActivity(i);
             }
             

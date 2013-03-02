@@ -29,94 +29,28 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 
     private TextToSpeech tts;
 
-    private EditText rssFeedUrl;
-    private Button readRssUrlButton, speakRssButton;
-    private TextView rssResult;
+    private Button stopButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rss_feed_reader);
 
-        rssFeedUrl = (EditText) findViewById(R.id.rssFeedUrl);
-        readRssUrlButton = (Button) findViewById(R.id.readRssUrlButton);
-        speakRssButton = (Button) findViewById(R.id.speakRssButton);
-        rssResult = (TextView) findViewById(R.id.rssResult);
+        stopButton = (Button) findViewById(R.id.stopButton);
 
         Intent callingIntent = getIntent();
         String callingIntentData = callingIntent.getDataString();
-        
-        rssFeedUrl.setText(callingIntentData);
 
 
         tts = new TextToSpeech(this, this);
         
-        readRssUrlButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-
-                AsyncTask<URL, Integer, String> task = new AsyncTask<URL, Integer, String>() {
-
-                    @Override
-                    protected String doInBackground(URL... params) {
-                        try {
-                            RssFeed feed = RssReader.read(params[0]);
-                            ArrayList<RssItem> rssItems = feed.getRssItems();
-
-                            StringBuilder rss = new StringBuilder();
-                            for (RssItem rssItem : rssItems) {
-
-                                Source source = new Source(rssItem.getContent());
-                                source.fullSequentialParse();
-
-                                rss.append(rssItem.getTitle());
-                                rss.append(source.getTextExtractor().setIncludeAttributes(false).toString());
-                            }
-                            return rss.toString();
-                        } catch (SAXException e) {
-                            Log.e("rollon", "Could not parse RSS feed", e);
-                            return "";
-                        } catch (IOException e) {
-                            Log.e("rollon", "IOExcpetion Could not parse RSS feed", e);
-                            return "";
-                        }
-                    }
-
-                    @Override
-                    protected void onProgressUpdate(Integer... progress) {
-
-                    }
-
-                    @Override
-                    protected void onPostExecute(String result) {
-                        rssResult.setText(result);
-                    }
-                };
-
-                try {
-                    URL url = new URL(rssFeedUrl.getText().toString());
-                    task.execute(url);
-                } catch (MalformedURLException e) {
-                    // TODO Auto-generated catch block
-                    Log.e("rollon", "Bad URL entered.");
-                    rssResult.setText("Invalid URL entered, try again.");
-                }
-
-            }
-        });
-        
-        speakRssButton.setOnClickListener(new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                String text = rssResult.getText().toString();
-
-                int res = tts.speak(text.substring(0,  2000), TextToSpeech.QUEUE_FLUSH, null);
-                if (res == TextToSpeech.ERROR) {
-                    Log.e("rollon", "There was an error saying things");
-                }
-            }
+        stopButton.setOnClickListener(new View.OnClickListener() {
+        	
+        	@Override
+        	public void onClick(View v) {
+        		finish();
+        	}
+        	
         });
     }
 
@@ -136,7 +70,7 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTS", "This Language is not supported");
             } else {
-                speakRssButton.setEnabled(true);
+                //speakRssButton.setEnabled(true);
             }
 
         } else {
