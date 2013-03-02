@@ -66,8 +66,17 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 
                             StringBuilder rss = new StringBuilder();
                             for (RssItem rssItem : rssItems) {
-
-                                Source source = new Source(rssItem.getContent());
+                                Log.i("rollon", "Content: " + rssItem.getContent());
+                                String content = rssItem.getContent();
+                                
+                                if (content == null || content.length() <= 0) {
+                                    content = rssItem.getDescription();
+                                    
+                                    if (content == null || content.length() <= 0) {
+                                        content  = "";
+                                    }
+                                }
+                                Source source = new Source(content);
                                 source.fullSequentialParse();
 
                                 rss.append(rssItem.getTitle());
@@ -96,6 +105,7 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 
                 try {
                     URL url = new URL(rssFeedUrl.getText().toString());
+                    Log.i("rollon", "Url: " + url.toString());
                     task.execute(url);
                 } catch (MalformedURLException e) {
                     // TODO Auto-generated catch block
