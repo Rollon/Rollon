@@ -9,9 +9,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class FeedsActivity extends Activity {
     
@@ -39,6 +42,18 @@ public class FeedsActivity extends Activity {
         feedListAdapter = new FeedListAdapter();
         
         feedsListView.setAdapter(feedListAdapter);
+        
+        final Activity activity = this;
+        
+        feedsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Feed selected = feeds[position];
+                Toast.makeText(activity, "Feed Clicked", Toast.LENGTH_LONG).show();
+            }
+            
+        });
     }
 
     @Override
@@ -63,5 +78,4 @@ public class FeedsActivity extends Activity {
           return v;
         }
     }
-
 }
