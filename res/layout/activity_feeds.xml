@@ -8,4 +8,14 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".FeedsActivity" >
 
+    <com.mobeta.android.dslv.DragSortListView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true" >
+
+    </com.mobeta.android.dslv.DragSortListView>
+    
 </RelativeLayout>
