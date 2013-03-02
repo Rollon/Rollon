@@ -6,5 +6,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_add">Add</string>
     <string name="title_activity_rss_feed_reader">RssFeedReaderActivity</string>
+    <string name="title_activity_feeds">FeedsActivity</string>
 
 </resources>
