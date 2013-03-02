@@ -8,35 +8,31 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 
 public class PlayListsActivity extends Activity implements TextToSpeech.OnInitListener {
     
-    private TextToSpeech tts;
-    private Button speakButton;
-    private EditText speakText;
+    private ListView playlistView;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_lists);
         
-        tts = new TextToSpeech(this, this);
+        playlistView = (ListView) findViewById(R.id.playlists);
+        String[] values = new String[] { "Driving to work", "Driving home", "Lazy Sunday", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n" };
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+          android.R.layout.simple_list_item_1, android.R.id.text1, values);
+
+
+        // Assign adapter to ListView
+        playlistView.setAdapter(adapter);
         
-        speakButton = (Button) findViewById(R.id.speakButton);
-        speakText = (EditText) findViewById(R.id.speakText);
-        
-        speakButton.setOnClickListener(new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                String text = speakText.getText().toString();
-                
-                tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-                
-            }
-        });
     }
 
     @Override
@@ -48,19 +44,6 @@ public class PlayListsActivity extends Activity implements TextToSpeech.OnInitLi
 
     @Override
     public void onInit(int status) {
-       if (status == TextToSpeech.SUCCESS) {
-           int result = tts.setLanguage(Locale.UK);
-           
-           if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-               Log.e("rollon", "Language not supported, giving up.");
-           } else {
-               // Enable all the things
-               speakButton.setEnabled(true);
-               Log.i("rollon", "Ready for action.");
-           }
-       } else {
-           Log.e("rollon", "Could not init TextToSpeech");
-       }
         
     }
 
