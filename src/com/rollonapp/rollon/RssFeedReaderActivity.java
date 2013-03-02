@@ -14,6 +14,7 @@ import nl.matshofman.saxrssreader.RssReader;
 import org.xml.sax.SAXException;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -42,7 +43,10 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
         speakRssButton = (Button) findViewById(R.id.speakRssButton);
         rssResult = (TextView) findViewById(R.id.rssResult);
 
-        rssFeedUrl.setText("http://feeds.feedburner.com/TechCrunch/");
+        Intent callingIntent = getIntent();
+        String callingIntentData = callingIntent.getDataString();
+        
+        rssFeedUrl.setText(callingIntentData);
 
 
         tts = new TextToSpeech(this, this);
