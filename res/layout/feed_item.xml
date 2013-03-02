@@ -2,7 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:paddingBottom="17dp"
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp"
+    android:paddingTop="17dp" >
 
     <TextView
         android:id="@+id/text"
@@ -10,14 +14,15 @@
         android:layout_height="@dimen/item_height"
         android:layout_weight="1"
         android:gravity="center_vertical"
-        android:paddingLeft="8dp"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:paddingLeft="0dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textSize="@dimen/feedlist_textsize" />
 
-    <ImageView
+    <!--ImageView
         android:id="@id/drag_handle"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/item_height"
         android:layout_weight="0"
-        android:background="@drawable/drag" />
+        android:background="@drawable/drag" /-->
 
 </LinearLayout>
