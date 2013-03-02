@@ -1,38 +1,40 @@
 package com.rollonapp.rollon;
 
-import java.util.ArrayList;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
-
-import com.mobeta.android.dslv.DragSortListView;
 
 public class FeedsActivity extends Activity {
     
-    private DragSortListView feedsListView;
+    private ListView feedsListView;
     
-    private ArrayList<Feed> feeds = null;
+    private Feed feeds[];
     private FeedListAdapter feedListAdapter;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feeds);
-        
-        feeds = new ArrayList<Feed>();
-        
-        for (int i = 0; i < 10; i++) {
-            Feed f = new Feed();
-            f.setName("Frank " + i);
-            feeds.add(f);
+         
+        feeds = new Feed[2];
+        try {
+            feeds[0] = new Feed("TechCrunch", new URL("http://feeds.feedburner.com/TechCrunch/"));
+            feeds[1] = new Feed("Engadget", new URL("http://www.engadget.com/rss.xml"));
+        } catch (MalformedURLException e) {
+            // TODO Auto-generated catch block
+            Log.e("rollon", "Bad URL",  e);
         }
         
-        feedsListView = (DragSortListView) findViewById(R.id.list);
+        feedsListView = (ListView) findViewById(R.id.list);
         
         feedListAdapter = new FeedListAdapter();
         
@@ -57,7 +59,7 @@ public class FeedsActivity extends Activity {
 
           TextView text = (TextView) v.findViewById(R.id.text);
 
-          text.setText(feeds.get(position).getName());
+          text.setText(feeds[position].getName());
           return v;
         }
     }

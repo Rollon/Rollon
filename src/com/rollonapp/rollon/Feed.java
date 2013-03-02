@@ -6,6 +6,11 @@ public class Feed {
     private URL url;
     private String name;
     
+    public Feed(String name, URL url) {
+        this.url = url;
+        this.name = name;
+    }
+    
     public URL getUrl() {
         return url;
     }
