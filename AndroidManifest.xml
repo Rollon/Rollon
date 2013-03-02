@@ -16,10 +16,6 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.rollonapp.rollon.PlayListsActivity"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
             android:name="com.rollonapp.rollon.RssFeedReaderActivity"
             android:label="@string/app_name" >
         </activity>
