@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -69,10 +70,12 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTS", "This Language is not supported");
             } else {
-                int res = tts.speak("Tech Crunch", TextToSpeech.QUEUE_FLUSH, null);
-                if (res == TextToSpeech.ERROR) {
+            	/*int res = */
+            	tts.speak("This is the title of the article.", TextToSpeech.QUEUE_FLUSH, null);
+                tts.speak("This is the article's content.", TextToSpeech.QUEUE_ADD, null);
+                /*if (res == TextToSpeech.ERROR) {
                     Log.e("rollon", "There was an error saying things");
-                }
+                }*/
             }
 
         } else {
