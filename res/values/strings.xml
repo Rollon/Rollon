@@ -8,5 +8,9 @@
     <string name="title_activity_rss_feed_reader">RssFeedReaderActivity</string>
     <string name="title_activity_feeds">FeedsActivity</string>
     <string name="title_activity_custom_rss">CustomRssActivity</string>
+    <string name="title_activity_main">RollOn</string>
+    <string name="title_activity_fullscreen">RollOn</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>

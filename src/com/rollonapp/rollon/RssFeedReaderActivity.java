@@ -18,6 +18,7 @@ import nl.matshofman.saxrssreader.RssReader;
 
 import org.xml.sax.SAXException;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -46,6 +47,7 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
         feedName = (TextView) findViewById(R.id.feedName);
         articleTitle = (TextView) findViewById(R.id.articleTitle);
         loadingIcon = (ProgressBar) findViewById(R.id.loadingIcon);
+       
         
         Intent callingIntent = getIntent();
         String callingIntentData = callingIntent.getDataString();

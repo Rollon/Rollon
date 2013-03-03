@@ -13,8 +13,8 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/rollon_blue_icon"
-        android:logo="@drawable/rollon_blue"
         android:label="@string/app_name"
+        android:logo="@drawable/rollon_blue"
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.rollonapp.rollon.RssFeedReaderActivity"
@@ -22,7 +22,18 @@
         </activity>
         <activity
             android:name="com.rollonapp.rollon.FeedsActivity"
-            android:label="" >
+            android:label=""
+            >
+        </activity>
+        <activity
+            android:name="com.rollonapp.rollon.CustomRssActivity"
+            android:label="@string/title_activity_custom_rss" >
+        </activity>
+        <activity
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:name="com.rollonapp.rollon.MainActivity"
+            android:label="@string/title_activity_main" 
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,8 +41,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.rollonapp.rollon.CustomRssActivity"
-            android:label="@string/title_activity_custom_rss" >
+            android:name="com.rollonapp.rollon.FullscreenActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_fullscreen"
+            android:theme="@style/FullscreenTheme" >
         </activity>
     </application>
 
