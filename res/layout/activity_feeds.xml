@@ -8,10 +8,39 @@
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/savedSoFarTime"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true" >
 
     </ListView>
+
+    <TextView
+        android:id="@+id/savedSoFarLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/darkGray"
+        android:gravity="center"
+        android:text="saved so far"
+        android:paddingBottom="4dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/grayStart"
+        android:textColorHint="@color/grayStart"
+        android:textColorLink="@color/grayEnd"
+        android:textSize="20dp" />
+
+    <TextView
+        android:id="@+id/savedSoFarTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/savedSoFarLabel"
+        android:layout_alignParentLeft="true"
+        android:background="@color/darkGray"
+        android:gravity="center"
+        android:paddingTop="3dp"
+        android:text="2h 47m"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/blue"
+        android:textSize="25dp" />
     
 </RelativeLayout>
