@@ -41,7 +41,6 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
         Intent callingIntent = getIntent();
         String callingIntentData = callingIntent.getDataString();
 
-
         tts = new TextToSpeech(this, this);
         
         stopButton.setOnClickListener(new View.OnClickListener() {
@@ -70,7 +69,10 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTS", "This Language is not supported");
             } else {
-                //speakRssButton.setEnabled(true);
+                int res = tts.speak("Tech Crunch", TextToSpeech.QUEUE_FLUSH, null);
+                if (res == TextToSpeech.ERROR) {
+                    Log.e("rollon", "There was an error saying things");
+                }
             }
 
         } else {
