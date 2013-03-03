@@ -32,6 +32,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnInitListener {
 
@@ -98,6 +99,7 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
     }
     
     protected void getTextAndSpeak(String feedUrl) {
+    	final Activity activity = this;
         AsyncTask<URL, Integer, String> task = new AsyncTask<URL, Integer, String>() {
 
             @Override
@@ -107,6 +109,9 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
                     RssFeed feed = RssReader.read(params[0]);
                     
                     ArrayList<RssItem> items = feed.getRssItems();
+                    if (items.size() < 1) {
+                    	return "";
+                    }
                     RssItem first = items.get(0);
                     content = first.getContent();
                     Log.i("rollon", "content: " + content);
@@ -135,6 +140,9 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
                 } catch (IOException e) {
                     Log.e("rollon", "Error playing", e);
                     content = "";
+                } catch (Exception e) {
+                	Log.e("rollon", "Error: ", e);
+                	content = "";
                 }
                 
                 // Put it through the filter
