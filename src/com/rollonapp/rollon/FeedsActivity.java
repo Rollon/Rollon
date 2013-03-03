@@ -28,13 +28,15 @@ public class FeedsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feeds);
          
-        feeds = new Feed[5];
+        feeds = new Feed[7];
         try {
             feeds[0] = new Feed("TechCrunch", new URL("http://feeds.feedburner.com/TechCrunch/"));
             feeds[1] = new Feed("Engadget", new URL("http://www.engadget.com/rss.xml"));
             feeds[2] = new Feed("Food.com", new URL("http://www.food.com/rss"));
             feeds[3] = new Feed("Columbus Dispatch", new URL("http://www.dispatch.com/content/syndication/news_national.xml"));
             feeds[4] = new Feed("CBS Sports", new URL("http://feeds.cbssports.com/cbssportsline/home_news"));
+            feeds[5] = new Feed("Inc", new URL("http://feeds.inc.com/home/updates"));
+            feeds[6] = new Feed("Entrepreneur", new URL("http://feeds.feedburner.com/entrepreneur/latest"));
         } catch (MalformedURLException e) {
             // TODO Auto-generated catch block
             Log.e("rollon", "Bad URL",  e);

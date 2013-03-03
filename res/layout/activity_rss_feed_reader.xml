@@ -40,4 +40,13 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textSize="@dimen/article_title_textsize" />
 
+    <ProgressBar
+        android:id="@+id/loadingIcon"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/articleTitle"
+        android:layout_centerHorizontal="true"
+        android:indeterminate="true" />
+
 </RelativeLayout>

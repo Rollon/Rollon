@@ -27,6 +27,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnInitListener {
@@ -35,6 +36,7 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 
     private Button stopButton;
     private TextView feedName, articleTitle;
+    private ProgressBar loadingIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,7 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
         stopButton = (Button) findViewById(R.id.stopButton);
         feedName = (TextView) findViewById(R.id.feedName);
         articleTitle = (TextView) findViewById(R.id.articleTitle);
+        loadingIcon = (ProgressBar) findViewById(R.id.loadingIcon);
         
         Intent callingIntent = getIntent();
         String callingIntentData = callingIntent.getDataString();
@@ -162,6 +165,8 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
                 String title = list.get(0);
                 
                 articleTitle.setText(title);
+                
+                loadingIcon.setVisibility(View.GONE);
                 
                 int length = (text.length() < 3000) ? text.length() : 3000;
                 tts.speak(text.substring(0,  length), TextToSpeech.QUEUE_FLUSH, null);
