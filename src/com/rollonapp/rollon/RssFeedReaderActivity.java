@@ -1,8 +1,13 @@
 package com.rollonapp.rollon;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -70,12 +75,9 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTS", "This Language is not supported");
             } else {
-            	/*int res = */
-            	tts.speak("This is the title of the article.", TextToSpeech.QUEUE_FLUSH, null);
-                tts.speak("This is the article's content.", TextToSpeech.QUEUE_ADD, null);
-                /*if (res == TextToSpeech.ERROR) {
-                    Log.e("rollon", "There was an error saying things");
-                }*/
+                Intent callingIntent = getIntent();
+                String callingIntentData = callingIntent.getDataString();
+            	getTextAndSpeak(callingIntentData);
             }
 
         } else {
@@ -92,6 +94,69 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
             tts.shutdown();
         }
         super.onDestroy();
+    }
+    
+    protected void getTextAndSpeak(String feedUrl) {
+        AsyncTask<URL, Integer, String> task = new AsyncTask<URL, Integer, String>() {
+
+            @Override
+            protected String doInBackground(URL... params) {
+                String content;
+                try {
+                    RssFeed feed = RssReader.read(params[0]);
+                    
+                    ArrayList<RssItem> items = feed.getRssItems();
+                    RssItem first = items.get(0);
+                    content = first.getContent();
+                    Log.i("rollon", "content: " + content);
+                    
+                    if (content == null || content.length() <= 0) {
+                        Log.i("rollon", "Getting content from link...");
+                        // Need to make our HTTP call
+                        String argument = URLEncoder.encode(first.getLink(), "UTF-8");
+                        URL apiUrl = new URL("http://rollonapp.com/article/" + argument);
+                        HttpURLConnection conn = (HttpURLConnection) apiUrl.openConnection();
+                        try {
+                            InputStream in  = new BufferedInputStream(conn.getInputStream());
+                            java.util.Scanner s = new java.util.Scanner(in).useDelimiter("\\A");
+                            content = s.next();
+                        } catch (IOException e) {
+                            Log.e("rollon", "Could not get article text.", e);
+                            content = "";
+                        }
+                    }
+                    
+                    content = first.getTitle() + content;
+                    
+                } catch (SAXException e) {
+                    Log.e("rollon", "Error playing", e);
+                    content = "";
+                } catch (IOException e) {
+                    Log.e("rollon", "Error playing", e);
+                    content = "";
+                }
+                
+                // Put it through the filter
+                Source source = new Source(content);
+                source.fullSequentialParse();
+                content = source.getTextExtractor().setIncludeAttributes(false).toString();
+                
+                Log.i("rollon", "Final content: " + content);
+                
+                return content;
+            }
+            
+            protected void onPostExecute(String text) {
+                tts.speak(text.substring(0,  3000), TextToSpeech.QUEUE_FLUSH, null);
+            }
+            
+        };
+        
+        try {
+            task.execute(new URL(feedUrl));
+        } catch (MalformedURLException e) {
+            Log.e("rollon", "Bad URL", e);
+        }
     }
 
 }
