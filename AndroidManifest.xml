@@ -12,9 +12,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/rollon_icon"
+        android:icon="@drawable/rollon_blue_icon"
+        android:logo="@drawable/rollon_blue"
         android:label="@string/app_name"
-        android:logo="@drawable/rollon"
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.rollonapp.rollon.RssFeedReaderActivity"
