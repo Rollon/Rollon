@@ -7,8 +7,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import net.htmlparser.jericho.Source;
@@ -18,36 +18,37 @@ import nl.matshofman.saxrssreader.RssReader;
 
 import org.xml.sax.SAXException;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
-import android.speech.tts.UtteranceProgressListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnInitListener {
 
     private TextToSpeech tts;
 
     private Button stopButton;
+    private TextView feedName, articleTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rss_feed_reader);
         stopButton = (Button) findViewById(R.id.stopButton);
-
+        feedName = (TextView) findViewById(R.id.feedName);
+        articleTitle = (TextView) findViewById(R.id.articleTitle);
+        
         Intent callingIntent = getIntent();
         String callingIntentData = callingIntent.getDataString();
+        String feedNameFromIntent = callingIntent.getStringExtra("FEED_NAME");
+        
+        feedName.setText(feedNameFromIntent);
 
         tts = new TextToSpeech(this, this);
         
@@ -100,18 +101,16 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
     
     protected void getTextAndSpeak(String feedUrl) {
     	final Activity activity = this;
-        AsyncTask<URL, Integer, String> task = new AsyncTask<URL, Integer, String>() {
+        AsyncTask<URL, Integer, List<String>> task = new AsyncTask<URL, Integer, List<String>>() {
 
             @Override
-            protected String doInBackground(URL... params) {
-                String content;
+            protected ArrayList<String> doInBackground(URL... params) {
+                String content, title = "";
                 try {
                     RssFeed feed = RssReader.read(params[0]);
                     
                     ArrayList<RssItem> items = feed.getRssItems();
-                    if (items.size() < 1) {
-                    	return "";
-                    }
+
                     RssItem first = items.get(0);
                     content = first.getContent();
                     Log.i("rollon", "content: " + content);
@@ -131,8 +130,8 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
                             content = "";
                         }
                     }
-                    
-                    content = first.getTitle() + content;
+                    title = first.getTitle();
+                    content = first.getTitle() + "... " + content;
                     
                 } catch (SAXException e) {
                     Log.e("rollon", "Error playing", e);
@@ -152,10 +151,18 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
                 
                 Log.i("rollon", "Final content: " + content);
                 
-                return content;
+                ArrayList<String> list = new ArrayList<String>(2);
+                list.add(title);
+                list.add(content);
+                return list;
             }
             
-            protected void onPostExecute(String text) {
+            protected void onPostExecute(List<String> list) {
+                String text = list.get(1);
+                String title = list.get(0);
+                
+                articleTitle.setText(title);
+                
                 int length = (text.length() < 3000) ? text.length() : 3000;
                 tts.speak(text.substring(0,  length), TextToSpeech.QUEUE_FLUSH, null);
             }

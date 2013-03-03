@@ -36,7 +36,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="14dp"
         android:gravity="center_horizontal"
-        android:text="Want To Build A $1B Consumer Company? Look For Long-Haul Founders And Don’t Fear Incumbents"
+        android:text=""
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textSize="@dimen/article_title_textsize" />
 
