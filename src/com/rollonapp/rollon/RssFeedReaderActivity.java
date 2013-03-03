@@ -148,7 +148,8 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
             }
             
             protected void onPostExecute(String text) {
-                tts.speak(text.substring(0,  3000), TextToSpeech.QUEUE_FLUSH, null);
+                int length = (text.length() < 3000) ? text.length() : 3000;
+                tts.speak(text.substring(0,  length), TextToSpeech.QUEUE_FLUSH, null);
             }
             
         };
