@@ -7,5 +7,6 @@
     <string name="action_add">Add</string>
     <string name="title_activity_rss_feed_reader">RssFeedReaderActivity</string>
     <string name="title_activity_feeds">FeedsActivity</string>
+    <string name="title_activity_custom_rss">CustomRssActivity</string>
 
 </resources>
