@@ -18,7 +18,6 @@ import nl.matshofman.saxrssreader.RssReader;
 
 import org.xml.sax.SAXException;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -28,6 +27,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -38,6 +38,8 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
     private Button stopButton;
     private TextView feedName, articleTitle;
     private ProgressBar loadingIcon;
+    
+    private TextView articleText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +54,12 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
         Intent callingIntent = getIntent();
         String callingIntentData = callingIntent.getDataString();
         String feedNameFromIntent = callingIntent.getStringExtra("FEED_NAME");
+        
+        // Filter the new request if the feed name is "UNTRACKED_CUSTOM_RSS" and add to file
+        if ( feedNameFromIntent.equals("UNTRACKED_CUSTOM_RSS")){
+        	feedNameFromIntent = "Custom Feed";
+        	//TODO Add to file
+        }
         
         feedName.setText(feedNameFromIntent);
 
@@ -168,9 +176,14 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
                 
                 articleTitle.setText(title);
                 
+                // Print the text to screen for debugging purposes.
+                articleText = (TextView) findViewById(R.id.articleText);
+                articleText.setText(text);
+                
                 loadingIcon.setVisibility(View.GONE);
                 
                 int length = (text.length() < 3000) ? text.length() : 3000;
+                //int length = text.length(); // Prints full article
                 tts.speak(text.substring(0,  length), TextToSpeech.QUEUE_FLUSH, null);
             }
             

@@ -33,6 +33,7 @@ public class CustomRssActivity extends Activity {
 			public void onClick(View v) {
 				Intent i = new Intent(activity, RssFeedReaderActivity.class);
 				i.setData(Uri.parse(inputFeed.getText().toString()));
+				i.putExtra("FEED_NAME", "UNTRACKED_CUSTOM_RSS");
 				startActivity(i);			
 			}
 		});

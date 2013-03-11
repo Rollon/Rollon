@@ -49,4 +49,23 @@
         android:layout_centerHorizontal="true"
         android:indeterminate="true" />
 
+    <ScrollView
+        android:id="@+id/articleTextScroll"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/stopButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="14dp"
+        android:layout_below="@+id/articleTitle"
+        android:fillViewport="true"
+        android:scrollbars="vertical" >
+
+        <TextView
+            android:id="@+id/articleText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textIsSelectable="false" />
+    </ScrollView>
+
 </RelativeLayout>

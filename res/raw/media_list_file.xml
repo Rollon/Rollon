@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Media>
+	<RSSFeeds>
+		<RSSFeed>
+        	<FeedTitle>TechCrunch</FeedTitle>
+            <FeedURL>http://feeds.feedburner.com/TechCrunch/</FeedURL>
+       	</RSSFeed>
+       	<RSSFeed>
+            <FeedTitle>Engadget</FeedTitle>
+            <FeedURL>http://www.engadget.com/rss.xml</FeedURL>
+		</RSSFeed>
+		<RSSFeed>
+            <FeedTitle>Food.com</FeedTitle>
+            <FeedURL>http://www.food.com/rss</FeedURL>
+		</RSSFeed>
+		<RSSFeed>
+            <FeedTitle>Columbus Dispatch</FeedTitle>
+            <FeedURL>http://www.dispatch.com/content/syndication/news_national.xml</FeedURL>
+		</RSSFeed>
+		<RSSFeed>
+            <FeedTitle>CBS Sports</FeedTitle>
+            <FeedURL>http://feeds.cbssports.com/cbssportsline/home_news</FeedURL>
+		</RSSFeed>
+		<RSSFeed>
+            <FeedTitle>Inc</FeedTitle>
+            <FeedURL>http://feeds.inc.com/home/updates</FeedURL>
+		</RSSFeed>
+		<RSSFeed>
+            <FeedTitle>Entrepreneur</FeedTitle>
+            <FeedURL>http://feeds.feedburner.com/entrepreneur/latest</FeedURL>
+		</RSSFeed>
+	</RSSFeeds>
+</Media>

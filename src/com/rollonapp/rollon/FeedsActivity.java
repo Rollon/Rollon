@@ -1,13 +1,19 @@
 package com.rollonapp.rollon;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -38,40 +44,44 @@ public class FeedsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_feeds);
 
-		// Read the file contents through toast!
-		BufferedReader input = null;
+		// Read the file contents into a map for easier list management
 		Map<String,String> feedMap = new HashMap<String, String>();
-		input = new BufferedReader(new InputStreamReader(getResources().openRawResource(R.raw.feed_list_file)));
 		try {
-			String line;
-			while ((line = input.readLine()) != null) {
-				String feedTitle = line.substring(0, line.indexOf("\t"));
-				String feedUrl = line.substring(line.indexOf("\t")+1);
-				feedMap.put(feedTitle, feedUrl);
+			InputStream rollonDataFile = getResources().openRawResource(R.raw.rollon_data);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(rollonDataFile);
+			doc.getDocumentElement().normalize();
+
+			// Get the list of RSSFeed elements
+			NodeList nodes = doc.getElementsByTagName("RSSFeed");
+
+			// Parse the feed title and url, and then add each to the map as key and value, respectively.
+			for (int i = 0; i < nodes.getLength(); i++) {
+				Node node = nodes.item(i);
+
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					Element element = (Element) node;
+					String feedTitle = getValue("FeedTitle", element);
+					String feedURL = getValue("FeedURL", element);
+					feedMap.put(feedTitle, feedURL);
+				}
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception e){
+			Log.e("rollon", "XML Parsing Error",e);
 		}
 
+		// Populate the feed list to display on the menu screen.
 		feeds = new Feed[feedMap.size()];
 		try {
+			// Iterate through the mapp and add the entries to the feed list.
 			int pos = 0;
 			for (Entry<String, String> feedPair: feedMap.entrySet()){
 				feeds[pos] = new Feed(feedPair.getKey(), new URL(feedPair.getValue()));
 				pos++;
 			}
-			
-			/*
-			feeds[0] = new Feed("TechCrunch", new URL("http://feeds.feedburner.com/TechCrunch/"));
-			feeds[1] = new Feed("Engadget", new URL("http://www.engadget.com/rss.xml"));
-			feeds[2] = new Feed("Food.com", new URL("http://www.food.com/rss"));
-			feeds[3] = new Feed("Columbus Dispatch", new URL("http://www.dispatch.com/content/syndication/news_national.xml"));
-			feeds[4] = new Feed("CBS Sports", new URL("http://feeds.cbssports.com/cbssportsline/home_news"));
-			feeds[5] = new Feed("Inc", new URL("http://feeds.inc.com/home/updates"));
-			feeds[6] = new Feed("Entrepreneur", new URL("http://feeds.feedburner.com/entrepreneur/latest"));*/
+
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			Log.e("rollon", "Bad URL",  e);
 		}
 
@@ -133,5 +143,14 @@ public class FeedsActivity extends Activity {
 			text.setText(feeds[position].getName());
 			return v;
 		}
+	}
+
+	/*
+	 * Helper function used to strip the specific node value from each element.
+	 */
+	private static String getValue(String tag, Element element) {
+		NodeList nodes = element.getElementsByTagName(tag).item(0).getChildNodes();
+		Node node = (Node) nodes.item(0);
+		return node.getNodeValue();
 	}
 }
