@@ -1,22 +1,13 @@
 package com.rollonapp.rollon;
 
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,57 +24,42 @@ public class FeedsActivity extends Activity {
 
 	private ListView feedsListView;
 
+	private final String RSS_FEED_SETTINGS = "RSS_FEED";
+	private final String SYSTEM_SETTINGS = "SYSTEM";
+
 	private Feed feeds[];
 	private FeedListAdapter feedListAdapter;
 
 	private ImageButton addFeedButton;
 	private Activity activity;
+	private TextView savedSoFarTime;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_feeds);
 
-		// Read the file contents into a map for easier list management
-		Map<String,String> feedMap = new HashMap<String, String>();
-		try {
-			InputStream rollonDataFile = getResources().openRawResource(R.raw.rollon_data);
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(rollonDataFile);
-			doc.getDocumentElement().normalize();
-
-			// Get the list of RSSFeed elements
-			NodeList nodes = doc.getElementsByTagName("RSSFeed");
-
-			// Parse the feed title and url, and then add each to the map as key and value, respectively.
-			for (int i = 0; i < nodes.getLength(); i++) {
-				Node node = nodes.item(i);
-
-				if (node.getNodeType() == Node.ELEMENT_NODE) {
-					Element element = (Element) node;
-					String feedTitle = getValue("FeedTitle", element);
-					String feedURL = getValue("FeedURL", element);
-					feedMap.put(feedTitle, feedURL);
-				}
-			}
-		} catch (Exception e){
-			Log.e("rollon", "XML Parsing Error",e);
-		}
-
 		// Populate the feed list to display on the menu screen.
+		SharedPreferences rssSettings = getSharedPreferences(RSS_FEED_SETTINGS, 0);
+		Map<String, ?> feedMap = rssSettings.getAll();
 		feeds = new Feed[feedMap.size()];
 		try {
-			// Iterate through the mapp and add the entries to the feed list.
+			// Iterate through the map and add the entries to the feed list.
 			int pos = 0;
-			for (Entry<String, String> feedPair: feedMap.entrySet()){
-				feeds[pos] = new Feed(feedPair.getKey(), new URL(feedPair.getValue()));
+			for (Entry<String, ?> feedPair: feedMap.entrySet()){
+				feeds[pos] = new Feed(feedPair.getKey(), new URL((String)feedPair.getValue()));
 				pos++;
 			}
 
 		} catch (MalformedURLException e) {
 			Log.e("rollon", "Bad URL",  e);
 		}
+
+		// Update the time shown.
+		savedSoFarTime = (TextView) findViewById(R.id.savedSoFarTime);
+		SharedPreferences systemSettings = getSharedPreferences(SYSTEM_SETTINGS, 0);
+		int tempTime = systemSettings.getInt("TIME_SAVED", -1);
+		savedSoFarTime.setText(tempTime + " minutes");
 
 		feedsListView = (ListView) findViewById(R.id.list);
 
@@ -105,6 +81,17 @@ public class FeedsActivity extends Activity {
 			}
 
 		});
+	}
+
+	@Override
+	public void onRestart()
+	{  
+		// After a pause OR at startup
+		super.onRestart();
+
+		// Reinitialize the activity to recreate the menu 
+		// and reload the time spent listening
+		onCreate(null);
 	}
 
 	@Override
@@ -143,14 +130,5 @@ public class FeedsActivity extends Activity {
 			text.setText(feeds[position].getName());
 			return v;
 		}
-	}
-
-	/*
-	 * Helper function used to strip the specific node value from each element.
-	 */
-	private static String getValue(String tag, Element element) {
-		NodeList nodes = element.getElementsByTagName(tag).item(0).getChildNodes();
-		Node node = (Node) nodes.item(0);
-		return node.getNodeValue();
 	}
 }

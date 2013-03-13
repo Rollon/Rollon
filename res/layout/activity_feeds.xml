@@ -38,7 +38,7 @@
         android:background="@color/darkGray"
         android:gravity="center"
         android:paddingTop="3dp"
-        android:text="2h 47m"
+        android:text=""
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/blue"
         android:textSize="25dp" />
