@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -34,6 +35,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rollonapp.rollon.R;
+import com.rollonapp.rollon.feeds.Feed;
+import com.rollonapp.rollon.feeds.FeedRepository;
 import com.rollonapp.rollon.tts.FeedSpeaker;
 
 public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnInitListener {
@@ -96,9 +99,7 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 					tts.stop();
 				}
 				
-				// Restart the feed process.
-				// TODO: This seems like a bad thing to do...
-				onInit(TextToSpeech.SUCCESS);
+				
 			}
 		});
 	}
@@ -181,7 +182,6 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 						}
 					}
 					title = first.getTitle();
-					content = first.getTitle() + "... " + content;
 
 				} catch (SAXException e) {
 					Log.e("rollon", "Error playing", e);
@@ -236,7 +236,7 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 
 				loadingIcon.setVisibility(View.GONE);
 
-				tts.speakAll(text);
+				tts.speakAll(title + " " + text);
 			}
 
 		};

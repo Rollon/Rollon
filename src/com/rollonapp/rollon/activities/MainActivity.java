@@ -1,6 +1,10 @@
 package com.rollonapp.rollon.activities;
 
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -10,11 +14,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.rollonapp.rollon.R;
-import com.rollonapp.rollon.R.layout;
-import com.rollonapp.rollon.R.menu;
-import com.rollonapp.rollon.R.raw;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,6 +22,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
+
+import com.rollonapp.rollon.R;
+import com.rollonapp.rollon.feeds.Feed;
+import com.rollonapp.rollon.feeds.FeedRepository;
 
 public class MainActivity extends Activity {
 
@@ -38,6 +41,7 @@ public class MainActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
                                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
+        
         
         // Check if the preferences have been initialized, if not, add the proper values.
         SharedPreferences systemSettings = getSharedPreferences(SYSTEM_SETTINGS, 0);
