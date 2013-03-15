@@ -160,6 +160,11 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 					for ( RssItem x : items ){
 						Log.i("debug","Article Title: "  + x.getTitle().trim());
 					}
+					
+					// Check to make sure there is even another article, otherwise restart. :D
+					if ( articlePos >= items.size() ){
+						articlePos = 0;
+					}
 					first = items.get(articlePos);
 					content = first.getContent();
 

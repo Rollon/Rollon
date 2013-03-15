@@ -58,8 +58,9 @@ public class FeedSpeaker extends TextToSpeech {
         
         HashMap<String, String> opts = new HashMap<String, String>();
         opts.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "currentText:" + 0 + "-" + 0);
-        this.speak("", QUEUE_ADD, opts);
+        this.speak("", QUEUE_FLUSH, opts);
 
+        Log.i("rollon", "Is Speaking: " + this.isSpeaking());
         return SUCCESS;
     }
 }
