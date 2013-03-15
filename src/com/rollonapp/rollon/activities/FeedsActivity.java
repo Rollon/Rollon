@@ -1,9 +1,16 @@
-package com.rollonapp.rollon;
+package com.rollonapp.rollon.activities;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.rollonapp.rollon.R;
+import com.rollonapp.rollon.R.drawable;
+import com.rollonapp.rollon.R.id;
+import com.rollonapp.rollon.R.layout;
+import com.rollonapp.rollon.R.menu;
+import com.rollonapp.rollon.feeds.Feed;
 
 import android.app.Activity;
 import android.content.Intent;

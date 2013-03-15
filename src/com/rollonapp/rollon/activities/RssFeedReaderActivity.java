@@ -1,4 +1,4 @@
-package com.rollonapp.rollon;
+package com.rollonapp.rollon.activities;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -17,6 +17,11 @@ import nl.matshofman.saxrssreader.RssItem;
 import nl.matshofman.saxrssreader.RssReader;
 
 import org.xml.sax.SAXException;
+
+import com.rollonapp.rollon.R;
+import com.rollonapp.rollon.R.id;
+import com.rollonapp.rollon.R.layout;
+import com.rollonapp.rollon.R.menu;
 
 import android.app.Activity;
 import android.content.Intent;

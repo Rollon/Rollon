@@ -1,5 +1,8 @@
-package com.rollonapp.rollon;
+package com.rollonapp.rollon.activities;
 
+import com.rollonapp.rollon.R;
+import com.rollonapp.rollon.R.id;
+import com.rollonapp.rollon.R.layout;
 import com.rollonapp.rollon.util.SystemUiHider;
 
 import android.annotation.TargetApi;

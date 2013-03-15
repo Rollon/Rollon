@@ -1,4 +1,4 @@
-package com.rollonapp.rollon;
+package com.rollonapp.rollon.feeds;
 import java.net.URL;
 
 

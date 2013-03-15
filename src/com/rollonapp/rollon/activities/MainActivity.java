@@ -1,4 +1,4 @@
-package com.rollonapp.rollon;
+package com.rollonapp.rollon.activities;
 
 import java.io.InputStream;
 
@@ -9,6 +9,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.rollonapp.rollon.R;
+import com.rollonapp.rollon.R.layout;
+import com.rollonapp.rollon.R.menu;
+import com.rollonapp.rollon.R.raw;
 
 import android.app.Activity;
 import android.content.Intent;
