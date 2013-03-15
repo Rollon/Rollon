@@ -97,7 +97,8 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 				}
 				
 				// Restart the feed process.
-				onInit(0);
+				// TODO: This seems like a bad thing to do...
+				onInit(TextToSpeech.SUCCESS);
 			}
 		});
 	}

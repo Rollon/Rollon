@@ -38,19 +38,21 @@ public class FeedSpeaker extends TextToSpeech {
             @Override
             public void onDone(String utteranceId) {
                 int startLocation = location;
-
+                
+                if (location == speakingText.length()) {
+                    Log.i("rollon", "Done speaking " + utteranceId);
+                    return;
+                }
+                
                 location += CHUNK_SIZE;
 
                 if (speakingText.length() < location) {
                     location = speakingText.length();
-                } else if (location == speakingText.length()) {
-                    Log.i("rollon", "Done speaking " + utteranceId);
-                    return;
                 }
 
                 HashMap<String, String> opts = new HashMap<String, String>();
                 opts.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "currentText:" + startLocation + "-" + location);
-                speaker.speak(speakingText.substring(startLocation, location), QUEUE_ADD, opts);
+                speaker.speak(speakingText.substring(startLocation, location), QUEUE_FLUSH, opts);
             }
         });
         
