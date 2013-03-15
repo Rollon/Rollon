@@ -38,22 +38,28 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 	private final String RSS_FEED_SETTINGS = "RSS_FEED";
 	private final String SYSTEM_SETTINGS = "SYSTEM";
 
+	private int articlePos = 0;
+	
 	private Time startTime;
 	private Time endTime;
 
 	private TextToSpeech tts;
 
 	private Button stopButton;
+	private Button skipButton;
 	private TextView feedName, articleTitle;
 	private ProgressBar loadingIcon;
 
 	private TextView articleText;
+
+	private RssItem first;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_rss_feed_reader);
 		stopButton = (Button) findViewById(R.id.stopButton);
+		skipButton = (Button) findViewById(R.id.skipButton);
 		feedName = (TextView) findViewById(R.id.feedName);
 		articleTitle = (TextView) findViewById(R.id.articleTitle);
 		loadingIcon = (ProgressBar) findViewById(R.id.loadingIcon);
@@ -62,25 +68,7 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 		startTime = new Time();
 		startTime.setToNow();
 
-		Intent callingIntent = getIntent();
-		String callingIntentData = callingIntent.getDataString();
-		String feedNameFromIntent = callingIntent.getStringExtra("FEED_NAME");	
-
-		// Filter the new request if the feed name is "UNTRACKED_CUSTOM_RSS" and add to file
-		if ( feedNameFromIntent.equals("UNTRACKED_CUSTOM_RSS")){
-			feedNameFromIntent = "Custom Feed";
-			SharedPreferences rssSettings = getSharedPreferences(RSS_FEED_SETTINGS, 0);
-			if ( rssSettings.contains(feedNameFromIntent) ){
-				Toast.makeText(getApplicationContext(), "Sorry, the custom RSS feed is already present.", Toast.LENGTH_LONG).show();
-			} else {
-				SharedPreferences.Editor rssSettingsEditor = rssSettings.edit();
-				rssSettingsEditor.putString(feedNameFromIntent, callingIntentData);
-				rssSettingsEditor.commit();
-			}
-		}
-
-		feedName.setText(feedNameFromIntent);
-
+		// Initialize the speaker
 		tts = new TextToSpeech(this, this);
 
 		stopButton.setOnClickListener(new View.OnClickListener() {
@@ -91,7 +79,23 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 				updateTimeSaved();
 				finish();
 			}
-
+		});
+		
+		skipButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// Increment position.
+				articlePos++;
+				
+				// If it is reading, stop it.
+				if ( tts != null ){
+					tts.stop();
+				}
+				
+				// Restart the feed process.
+				onInit(0);
+			}
 		});
 	}
 
@@ -119,7 +123,6 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 		} else {
 			Log.e("TTS", "Initilization Failed!");
 		}
-
 	}
 
 	@Override
@@ -138,7 +141,7 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 		}
 		super.onDestroy();
 	}
-
+	
 	protected void getTextAndSpeak(String feedUrl) {
 		AsyncTask<URL, Integer, List<String>> task = new AsyncTask<URL, Integer, List<String>>() {
 
@@ -149,9 +152,13 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 					RssFeed feed = RssReader.read(params[0]);
 
 					ArrayList<RssItem> items = feed.getRssItems();
-
-					RssItem first = items.get(0);
+					
+					for ( RssItem x : items ){
+						Log.i("debug","Article Title: "  + x.getTitle().trim());
+					}
+					first = items.get(articlePos);
 					content = first.getContent();
+
 					Log.i("rollon", "content: " + content);
 
 					if (content == null || content.length() <= 0) {
@@ -206,10 +213,28 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 				articleText = (TextView) findViewById(R.id.articleText);
 				articleText.setText(text);
 
+				// Filter each request if the feed name is "UNTRACKED_CUSTOM_RSS" add to file
+				String finalFeedName = getIntent().getStringExtra("FEED_NAME");
+				if ( finalFeedName.equals("UNTRACKED_CUSTOM_RSS")){
+					finalFeedName = first.getFeed().getTitle();
+					SharedPreferences rssSettings = getSharedPreferences(RSS_FEED_SETTINGS, 0);
+					if ( rssSettings.contains(finalFeedName) ){
+						Toast.makeText(getApplicationContext(), "Sorry, the custom RSS feed is already present.", Toast.LENGTH_LONG).show();
+					} else {
+						SharedPreferences.Editor rssSettingsEditor = rssSettings.edit();
+						rssSettingsEditor.putString(finalFeedName, getIntent().getDataString());
+						rssSettingsEditor.commit();
+					}
+				}
+				
+				// Update the feed name title
+				feedName.setText(finalFeedName);
+
 				loadingIcon.setVisibility(View.GONE);
 
-				int length = (text.length() < 3000) ? text.length() : 3000;
-				//int length = text.length(); // Prints full article
+				//TODO Decide whether this is dangerous or not.
+				//int length = (text.length() < 3000) ? text.length() : 3000;
+				int length = text.length(); // Prints full article
 				tts.speak(text.substring(0,  length), TextToSpeech.QUEUE_FLUSH, null);
 			}
 
@@ -234,7 +259,7 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 		// Calculate the difference
 		int tempTime = systemSettings.getInt("TIME_SAVED", -1);
 		tempTime += ( ( endTime.toMillis(true) - startTime.toMillis(true) ) / 100000 );
-		
+
 		// Commit the changes for persistence
 		systemSettingsEditor.putInt("TIME_SAVED", tempTime);
 		systemSettingsEditor.apply();
