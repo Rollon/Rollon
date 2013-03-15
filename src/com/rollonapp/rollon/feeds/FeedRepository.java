@@ -26,11 +26,11 @@ public class FeedRepository {
     }
 
     public List<Feed> getFeeds() {
-        return feeds;
+        return new ArrayList<Feed>(feeds);
     }
 
     public void setFeeds(List<Feed> feeds) {
-        this.feeds = feeds;
+        this.feeds = new ArrayList<Feed>(feeds);
         
         writeToFile(this.feeds);
     }

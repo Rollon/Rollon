@@ -53,8 +53,8 @@ public class MainActivity extends Activity {
         	systemSettingsEditor.commit();
         	
         	// Set up some initial RSS Feed Values
-        	SharedPreferences rssSettings = getSharedPreferences(RSS_FEED_SETTINGS, 0);
-        	SharedPreferences.Editor rssSettingsEditor = rssSettings.edit();
+        	FeedRepository repo = new FeedRepository(this);
+        	List<Feed> feeds = repo.getFeeds();
         	// Read the file contents into a map for easier list management
     		try {
     			InputStream rollonDataFile = getResources().openRawResource(R.raw.rollon_data);
@@ -74,7 +74,7 @@ public class MainActivity extends Activity {
     					Element element = (Element) node;
     					String feedTitle = getValue("FeedTitle", element);
     					String feedURL = getValue("FeedURL", element);
-    					rssSettingsEditor.putString(feedTitle, feedURL);
+    					feeds.add(new Feed(feedTitle, new URL(feedURL)));
     				}
     			}
     		} catch (Exception e){
@@ -82,7 +82,7 @@ public class MainActivity extends Activity {
     		}
     		
     		// Commit the feed changes
-    		rssSettingsEditor.commit();
+    		repo.setFeeds(feeds);
         }
         
         Intent i = new Intent(this, FeedsActivity.class);

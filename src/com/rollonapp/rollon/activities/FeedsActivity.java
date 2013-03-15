@@ -1,16 +1,7 @@
 package com.rollonapp.rollon.activities;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import com.rollonapp.rollon.R;
-import com.rollonapp.rollon.R.drawable;
-import com.rollonapp.rollon.R.id;
-import com.rollonapp.rollon.R.layout;
-import com.rollonapp.rollon.R.menu;
-import com.rollonapp.rollon.feeds.Feed;
+import java.util.Arrays;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -26,6 +17,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.rollonapp.rollon.R;
+import com.rollonapp.rollon.feeds.Feed;
+import com.rollonapp.rollon.feeds.FeedRepository;
 
 public class FeedsActivity extends Activity {
 
@@ -47,20 +42,11 @@ public class FeedsActivity extends Activity {
 		setContentView(R.layout.activity_feeds);
 
 		// Populate the feed list to display on the menu screen.
-		SharedPreferences rssSettings = getSharedPreferences(RSS_FEED_SETTINGS, 0);
-		Map<String, ?> feedMap = rssSettings.getAll();
-		feeds = new Feed[feedMap.size()];
-		try {
-			// Iterate through the map and add the entries to the feed list.
-			int pos = 0;
-			for (Entry<String, ?> feedPair: feedMap.entrySet()){
-				feeds[pos] = new Feed(feedPair.getKey(), new URL((String)feedPair.getValue()));
-				pos++;
-			}
-
-		} catch (MalformedURLException e) {
-			Log.e("rollon", "Bad URL",  e);
-		}
+		FeedRepository repo = new FeedRepository(this);
+		List<Feed> repoFeeds = repo.getFeeds();
+	
+		feeds = repoFeeds.toArray(new Feed[0]);
+		
 
 		// Update the time shown.
 		savedSoFarTime = (TextView) findViewById(R.id.savedSoFarTime);
