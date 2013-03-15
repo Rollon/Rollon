@@ -18,11 +18,6 @@ import nl.matshofman.saxrssreader.RssReader;
 
 import org.xml.sax.SAXException;
 
-import com.rollonapp.rollon.R;
-import com.rollonapp.rollon.R.id;
-import com.rollonapp.rollon.R.layout;
-import com.rollonapp.rollon.R.menu;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -38,6 +33,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.rollonapp.rollon.R;
+import com.rollonapp.rollon.tts.FeedSpeaker;
+
 public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnInitListener {
 
 	private final String RSS_FEED_SETTINGS = "RSS_FEED";
@@ -48,7 +46,7 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 	private Time startTime;
 	private Time endTime;
 
-	private TextToSpeech tts;
+	private FeedSpeaker tts;
 
 	private Button stopButton;
 	private Button skipButton;
@@ -74,8 +72,8 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 		startTime.setToNow();
 
 		// Initialize the speaker
-		tts = new TextToSpeech(this, this);
-
+		tts = new FeedSpeaker(this, this);
+		
 		stopButton.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -237,10 +235,7 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 
 				loadingIcon.setVisibility(View.GONE);
 
-				//TODO Decide whether this is dangerous or not.
-				//int length = (text.length() < 3000) ? text.length() : 3000;
-				int length = text.length(); // Prints full article
-				tts.speak(text.substring(0,  length), TextToSpeech.QUEUE_FLUSH, null);
+				tts.speakAll(text);
 			}
 
 		};
