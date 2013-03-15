@@ -1,8 +1,11 @@
 package com.rollonapp.rollon.feeds;
+import java.io.Serializable;
 import java.net.URL;
 
 
-public class Feed {
+public class Feed implements Serializable{
+
+    private static final long serialVersionUID = 8212071328640629750L;
     private URL url;
     private String name;
     
@@ -22,5 +25,9 @@ public class Feed {
     }
     public void setName(String name) {
         this.name = name;
+    }
+    
+    public String toString() {
+        return "Name: " + name + " URL: " + url.toExternalForm();
     }
 }

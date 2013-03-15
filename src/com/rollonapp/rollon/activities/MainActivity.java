@@ -1,6 +1,10 @@
 package com.rollonapp.rollon.activities;
 
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -10,11 +14,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.rollonapp.rollon.R;
-import com.rollonapp.rollon.R.layout;
-import com.rollonapp.rollon.R.menu;
-import com.rollonapp.rollon.R.raw;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,6 +22,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
+
+import com.rollonapp.rollon.R;
+import com.rollonapp.rollon.feeds.Feed;
+import com.rollonapp.rollon.feeds.FeedRepository;
 
 public class MainActivity extends Activity {
 
@@ -39,6 +42,7 @@ public class MainActivity extends Activity {
                                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
         
+        
         // Check if the preferences have been initialized, if not, add the proper values.
         SharedPreferences systemSettings = getSharedPreferences(SYSTEM_SETTINGS, 0);
         Boolean initialRun = systemSettings.getBoolean("FIRST_RUN", true);
@@ -49,8 +53,8 @@ public class MainActivity extends Activity {
         	systemSettingsEditor.commit();
         	
         	// Set up some initial RSS Feed Values
-        	SharedPreferences rssSettings = getSharedPreferences(RSS_FEED_SETTINGS, 0);
-        	SharedPreferences.Editor rssSettingsEditor = rssSettings.edit();
+        	FeedRepository repo = new FeedRepository(this);
+        	List<Feed> feeds = repo.getFeeds();
         	// Read the file contents into a map for easier list management
     		try {
     			InputStream rollonDataFile = getResources().openRawResource(R.raw.rollon_data);
@@ -70,7 +74,7 @@ public class MainActivity extends Activity {
     					Element element = (Element) node;
     					String feedTitle = getValue("FeedTitle", element);
     					String feedURL = getValue("FeedURL", element);
-    					rssSettingsEditor.putString(feedTitle, feedURL);
+    					feeds.add(new Feed(feedTitle, new URL(feedURL)));
     				}
     			}
     		} catch (Exception e){
@@ -78,7 +82,7 @@ public class MainActivity extends Activity {
     		}
     		
     		// Commit the feed changes
-    		rssSettingsEditor.commit();
+    		repo.setFeeds(feeds);
         }
         
         Intent i = new Intent(this, FeedsActivity.class);
