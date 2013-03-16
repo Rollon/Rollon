@@ -1,10 +1,5 @@
 package com.rollonapp.rollon.activities;
 
-import com.rollonapp.rollon.R;
-import com.rollonapp.rollon.R.id;
-import com.rollonapp.rollon.R.layout;
-import com.rollonapp.rollon.R.menu;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,6 +8,8 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.rollonapp.rollon.R;
 
 public class CustomRssActivity extends Activity {
 

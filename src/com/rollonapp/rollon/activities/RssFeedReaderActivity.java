@@ -8,7 +8,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -41,11 +40,11 @@ import com.rollonapp.rollon.tts.FeedSpeaker;
 
 public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnInitListener {
 
-	private final String RSS_FEED_SETTINGS = "RSS_FEED";
 	private final String SYSTEM_SETTINGS = "SYSTEM";
-
-	private int articlePos = 0;
+	private String finalFeedName = "";
 	
+	private int articlePos = 0;
+
 	private Time startTime;
 	private Time endTime;
 
@@ -73,10 +72,13 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 		// Start the timer
 		startTime = new Time();
 		startTime.setToNow();
+		
+		// Get the feed title to see if it needs added later.
+		finalFeedName = getIntent().getStringExtra("FEED_NAME");
 
 		// Initialize the speaker
 		tts = new FeedSpeaker(this, this);
-		
+
 		stopButton.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -86,20 +88,22 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 				finish();
 			}
 		});
-		
+
 		skipButton.setOnClickListener(new View.OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				// Increment position.
 				articlePos++;
-				
+
 				// If it is reading, stop it.
 				if ( tts != null ){
 					tts.stop();
 				}
-				
-				
+
+				// Restart the feed process.
+				// TODO: Does not do anything without the call, couldn't find a better call.
+				onInit(TextToSpeech.SUCCESS);
 			}
 		});
 	}
@@ -146,7 +150,7 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 		}
 		super.onDestroy();
 	}
-	
+
 	protected void getTextAndSpeak(String feedUrl) {
 		AsyncTask<URL, Integer, List<String>> task = new AsyncTask<URL, Integer, List<String>>() {
 
@@ -157,11 +161,7 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 					RssFeed feed = RssReader.read(params[0]);
 
 					ArrayList<RssItem> items = feed.getRssItems();
-					
-					for ( RssItem x : items ){
-						Log.i("debug","Article Title: "  + x.getTitle().trim());
-					}
-					
+
 					// Check to make sure there is even another article, otherwise restart. :D
 					if ( articlePos >= items.size() ){
 						articlePos = 0;
@@ -223,21 +223,38 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 				articleText.setText(text);
 
 				// Filter each request if the feed name is "UNTRACKED_CUSTOM_RSS" add to file
-				String finalFeedName = getIntent().getStringExtra("FEED_NAME");
-				if ( finalFeedName.equals("UNTRACKED_CUSTOM_RSS")){
-					finalFeedName = first.getFeed().getTitle();
-					SharedPreferences rssSettings = getSharedPreferences(RSS_FEED_SETTINGS, 0);
-					if ( rssSettings.contains(finalFeedName) ){
-						Toast.makeText(getApplicationContext(), "Sorry, the custom RSS feed is already present.", Toast.LENGTH_LONG).show();
-					} else {
-						SharedPreferences.Editor rssSettingsEditor = rssSettings.edit();
-						rssSettingsEditor.putString(finalFeedName, getIntent().getDataString());
-						rssSettingsEditor.commit();
+				try {
+					if ( finalFeedName.equals("UNTRACKED_CUSTOM_RSS")){						
+						
+						// Update the feed repository to hold the new custom RSS.
+						FeedRepository repo = new FeedRepository(getBaseContext());
+						List<Feed> repoFeeds = repo.getFeeds();
+
+						finalFeedName = first.getFeed().getTitle();
+
+						// Check if the feed matches any in the repository.
+						Boolean foundFeed = false;
+						for ( Feed savedFeed : repoFeeds){
+							if ( savedFeed.getName().toString().trim().equals(finalFeedName.trim()) ){
+								foundFeed = true;
+								Toast.makeText(getApplicationContext(), "Sorry, the custom RSS feed is already present.", Toast.LENGTH_LONG).show();
+							}	
+						}
+
+						// If the list does not hold the feed, add it.
+						if ( !foundFeed ){
+							Feed finalFeed = new Feed(finalFeedName, new URL(getIntent().getDataString()));
+							repoFeeds.add(finalFeed);
+							repo.setFeeds(repoFeeds);
+						}
 					}
+
+					// Update the feed name title
+					feedName.setText(finalFeedName);
+
+				}catch (MalformedURLException e) {
+					Log.e("rollon", "Invalid URL passed in, cannot update feed.", e);
 				}
-				
-				// Update the feed name title
-				feedName.setText(finalFeedName);
 
 				loadingIcon.setVisibility(View.GONE);
 

@@ -60,7 +60,6 @@ public class FeedSpeaker extends TextToSpeech {
         opts.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "currentText:" + 0 + "-" + 0);
         this.speak("", QUEUE_FLUSH, opts);
 
-        Log.i("rollon", "Is Speaking: " + this.isSpeaking());
         return SUCCESS;
     }
 }
