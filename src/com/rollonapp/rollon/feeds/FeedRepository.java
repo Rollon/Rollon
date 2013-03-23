@@ -1,9 +1,6 @@
 package com.rollonapp.rollon.feeds;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -27,7 +24,7 @@ public class FeedRepository {
 
     public List<Feed> getFeeds() {
         return new ArrayList<Feed>(feeds);
-    }
+    } 
 
     public void setFeeds(List<Feed> feeds) {
         this.feeds = new ArrayList<Feed>(feeds);
@@ -66,6 +63,8 @@ public class FeedRepository {
             Log.e("rollon", "IOExcpetion while reading file.", e);
         } catch (ClassNotFoundException e) {
             Log.e("rollon", "ClassNotFoundException while reading feeds.", e);
+        } catch (ClassCastException e){
+            Log.e("rollon", "ClassNotCastException while reading feeds.", e);
         }
 
         return toReturn;

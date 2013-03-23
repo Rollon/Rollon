@@ -25,6 +25,10 @@
             android:label="" >
         </activity>
         <activity
+            android:name="com.rollonapp.rollon.activities.RssReaderActivity"
+            android:label="" >
+        </activity>
+        <activity
             android:name="com.rollonapp.rollon.activities.FeedsActivity"
             android:label="" >
         </activity>

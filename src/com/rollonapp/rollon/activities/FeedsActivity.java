@@ -1,6 +1,5 @@
 package com.rollonapp.rollon.activities;
 
-import java.util.Arrays;
 import java.util.List;
 
 import android.app.Activity;
@@ -8,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +24,6 @@ public class FeedsActivity extends Activity {
 
 	private ListView feedsListView;
 
-	private final String RSS_FEED_SETTINGS = "RSS_FEED";
 	private final String SYSTEM_SETTINGS = "SYSTEM";
 
 	private Feed feeds[];
@@ -67,9 +64,9 @@ public class FeedsActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				Feed selected = feeds[position];
-				Intent i  = new Intent(activity, RssFeedReaderActivity.class);
+				Intent i  = new Intent(activity, ProcessRssActivity.class);
 				i.setData(Uri.parse(selected.getUrl().toString()));
-				i.putExtra("FEED_NAME", selected.getName());
+				i.putExtra(ProcessRssActivity.INTENT_EXTRA_FEED_NAME, selected.getName());
 				startActivity(i);
 			}
 

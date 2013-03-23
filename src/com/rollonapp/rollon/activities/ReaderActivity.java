@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -34,7 +36,7 @@ import com.rollonapp.rollon.tts.FeedSpeaker;
  * @author Paul Tela
  * 
  */
-public class ReaderActivity extends Activity implements TextToSpeech.OnInitListener {
+public class ReaderActivity extends Activity implements TextToSpeech.OnInitListener, OnClickListener {
     // Log tag
     protected static final String TAG = "rollon";
 
@@ -119,6 +121,22 @@ public class ReaderActivity extends Activity implements TextToSpeech.OnInitListe
         }
         super.onDestroy();
     }
+    
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == stopButton.getId()) {
+            // Handle stop button press
+            finish();
+        } else if (v.getId() == skipButton.getId()) {
+            // Handle skip button
+            position++;
+            processAndSpeak(position);
+        } else {
+            // Nothing matched
+            Log.d(TAG, "onClick matched nothing for: " + v.getId());
+        }
+        
+    }
 
     /**
      * Called before Title is displayed. Called on background worker thread.
@@ -163,6 +181,10 @@ public class ReaderActivity extends Activity implements TextToSpeech.OnInitListe
         subtitle = (TextView) findViewById(R.id.readerSubtitle);
         text = (TextView) findViewById(R.id.readerText);
         loadingIcon = (ProgressBar) findViewById(R.id.readerLoadingIcon);
+        stopButton = (Button) findViewById(R.id.readerStopButton);
+        stopButton.setOnClickListener(this);
+        skipButton = (Button)findViewById(R.id.readerSkipButton);
+        skipButton.setOnClickListener(this);
     }
 
     /**
@@ -207,6 +229,12 @@ public class ReaderActivity extends Activity implements TextToSpeech.OnInitListe
             this.subtitle = subtitle;
             this.text = text;
         }
+        
+        @Override
+        protected void onPreExecute() {
+            // Turn the progress bar on
+            ReaderActivity.this.loadingIcon.setVisibility(View.VISIBLE);
+        }
 
         @Override
         protected Void doInBackground(Void... params) {
@@ -218,6 +246,7 @@ public class ReaderActivity extends Activity implements TextToSpeech.OnInitListe
 
         @Override
         protected void onPostExecute(Void v) {
+            ReaderActivity.this.loadingIcon.setVisibility(View.GONE);
             ReaderActivity.this.text.setText(this.text);
             ReaderActivity.this.subtitle.setText(this.subtitle);
             ReaderActivity.this.title.setText(this.title);

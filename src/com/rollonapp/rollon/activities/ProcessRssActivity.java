@@ -26,7 +26,6 @@ public class ProcessRssActivity extends Activity {
     
     protected static final String TAG = "rollon";
     
-    public static final String INTENT_EXTRA_RSS_URL = "com.rollonapp.rollon.RssUrl";
     public static final String INTENT_EXTRA_FEED_NAME = "com.rollonapp.rollon.FeedName";
 
     @Override
@@ -36,9 +35,11 @@ public class ProcessRssActivity extends Activity {
 
         Intent callingIntent = getIntent();
 
-        String url = callingIntent.getStringExtra(INTENT_EXTRA_RSS_URL);
+        String url = callingIntent.getDataString();
         String feedName = callingIntent.getStringExtra(INTENT_EXTRA_FEED_NAME);
-
+        
+        Log.i(TAG, "Got data and feed name: (" + url + ", " + feedName + ")");
+        
         new GetRSSFeedTask(url, feedName).execute();
     }
 
@@ -93,11 +94,11 @@ public class ProcessRssActivity extends Activity {
                     }
                     
                     texts.add(content);
-                    subtitles.add("This is a subtitle");
+                    subtitles.add(item.getTitle());
                     titles.add(feedName);
                 }
                 
-                Intent i = new Intent(ProcessRssActivity.this, ReaderActivity.class);
+                Intent i = new Intent(ProcessRssActivity.this, RssReaderActivity.class);
                 i.putStringArrayListExtra(ReaderActivity.INTENT_EXTRA_TITLES, titles);
                 i.putStringArrayListExtra(ReaderActivity.INTENT_EXTRA_SUBTITLES, subtitles);
                 i.putStringArrayListExtra(ReaderActivity.INTENT_EXTRA_TEXTS, texts);
