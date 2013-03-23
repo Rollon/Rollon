@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rollonapp.rollon.R;
+import com.rollonapp.rollon.timer.Timer;
 import com.rollonapp.rollon.tts.FeedSpeaker;
 
 /**
@@ -59,6 +60,9 @@ public class ReaderActivity extends Activity implements TextToSpeech.OnInitListe
     // Keeping track of what will be read
     protected List<String> titles, subtitles, texts;
     protected int position;
+    
+    // Time tracking
+    protected Timer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,14 +76,18 @@ public class ReaderActivity extends Activity implements TextToSpeech.OnInitListe
         texts = callingIntent.getStringArrayListExtra(INTENT_EXTRA_TEXTS);
 
         if (!inputDataValidates()) {
-            Toast.makeText(this, "Invlaid reader information given!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Invalid reader information given!", Toast.LENGTH_LONG).show();
             finish();
         }
 
         position = 0;
+        
+        timer = new Timer(this);
 
         initViewVars();
-
+        
+        timer.start();
+        
         tts = new FeedSpeaker(this, this);
     }
 
@@ -118,6 +126,10 @@ public class ReaderActivity extends Activity implements TextToSpeech.OnInitListe
         if (tts != null) {
             tts.stop();
             tts.shutdown();
+        }
+        
+        if (timer != null) {
+            timer.stop();
         }
         super.onDestroy();
     }
