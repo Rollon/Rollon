@@ -46,7 +46,6 @@ public class MainActivity extends Activity {
         if ( initialRun ){
         	SharedPreferences.Editor systemSettingsEditor = systemSettings.edit();
         	systemSettingsEditor.putBoolean("FIRST_RUN", false);
-        	systemSettingsEditor.putInt("TIME_SAVED", 0);
         	systemSettingsEditor.commit();
         	
         	// Set up some initial RSS Feed Values
