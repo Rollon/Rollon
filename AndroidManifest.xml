@@ -48,14 +48,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.rollonapp.rollon.activities.FullscreenActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_fullscreen"
-            android:theme="@style/FullscreenTheme" >
-        </activity>
-        <activity
             android:name="com.rollonapp.rollon.activities.ProcessRssActivity"
-            android:label="@string/title_activity_process_rss" 
+            android:label="" 
              android:noHistory="true">
         </activity>
     </application>

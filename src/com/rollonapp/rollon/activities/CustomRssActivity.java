@@ -24,21 +24,6 @@ public class CustomRssActivity extends Activity {
 		// Collect form elements
 		listenButton = (Button) findViewById(R.id.listenButton);
 		inputFeed = (EditText) findViewById(R.id.inputFeed);
-
-		// Save the activity to start a new intent when listenButton is pressed
-		final Activity activity = this;
-
-		// Launch the selection into the current reading.
-		listenButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				Intent i = new Intent(activity, RssFeedReaderActivity.class);
-				i.setData(Uri.parse(inputFeed.getText().toString()));
-				i.putExtra("FEED_NAME", "UNTRACKED_CUSTOM_RSS");
-				startActivity(i);			
-			}
-		});
 	}
 
 
