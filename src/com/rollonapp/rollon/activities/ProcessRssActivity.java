@@ -86,22 +86,28 @@ public class ProcessRssActivity extends Activity {
                 ArrayList<String> texts = new ArrayList<String>();
                 ArrayList<String> subtitles = new ArrayList<String>();
                 ArrayList<String> titles = new ArrayList<String>();
+                ArrayList<String> urls = new ArrayList<String>();
                 
                 for (RssItem item: result) {
                     String content = item.getContent();
+                    String url = "";
                     if (content == null) {
                         content = "";
+                        url = item.getLink();
                     }
                     
                     texts.add(content);
                     subtitles.add(item.getTitle());
                     titles.add(feedName);
+                    urls.add(url);
                 }
                 
                 Intent i = new Intent(ProcessRssActivity.this, RssReaderActivity.class);
                 i.putStringArrayListExtra(ReaderActivity.INTENT_EXTRA_TITLES, titles);
                 i.putStringArrayListExtra(ReaderActivity.INTENT_EXTRA_SUBTITLES, subtitles);
                 i.putStringArrayListExtra(ReaderActivity.INTENT_EXTRA_TEXTS, texts);
+                i.putStringArrayListExtra(RssReaderActivity.INTENT_EXTRA_LOOKUP_ARTICLE_URL, urls);
+                
                 startActivity(i);
                 
             } else {
