@@ -12,5 +12,9 @@
     <string name="title_activity_fullscreen">RollOn</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="stop">Stop</string>
+    <string name="skip">Skip</string>
+    <string name="title_activity_process_rss">Process Rss</string>
+    <string name="processingRss">Processing RSS...</string>
 
 </resources>

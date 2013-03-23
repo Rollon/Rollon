@@ -21,19 +21,22 @@
             android:label="" >
         </activity>
         <activity
+            android:name="com.rollonapp.rollon.activities.ReaderActivity"
+            android:label="" >
+        </activity>
+        <activity
             android:name="com.rollonapp.rollon.activities.FeedsActivity"
-            android:label=""
-            >
+            android:label="" >
         </activity>
         <activity
             android:name="com.rollonapp.rollon.activities.CustomRssActivity"
             android:label="" >
         </activity>
         <activity
-            android:theme="@android:style/Theme.NoTitleBar"
             android:name="com.rollonapp.rollon.activities.MainActivity"
-            android:label="@string/title_activity_main" 
-            android:noHistory="true">
+            android:label="@string/title_activity_main"
+            android:noHistory="true"
+            android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -45,6 +48,11 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_fullscreen"
             android:theme="@style/FullscreenTheme" >
+        </activity>
+        <activity
+            android:name="com.rollonapp.rollon.activities.ProcessRssActivity"
+            android:label="@string/title_activity_process_rss" 
+             android:noHistory="true">
         </activity>
     </application>
 

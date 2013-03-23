@@ -8,7 +8,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -35,21 +34,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rollonapp.rollon.R;
-import com.rollonapp.rollon.feeds.Feed;
-import com.rollonapp.rollon.feeds.FeedRepository;
 import com.rollonapp.rollon.tts.FeedSpeaker;
 
 public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnInitListener {
 
-	private final String RSS_FEED_SETTINGS = "RSS_FEED";
-	private final String SYSTEM_SETTINGS = "SYSTEM";
+	private static final String ROLLONAPP_API_ROOT = "http://rollonapp.com/article/";
 
-	private int articlePos = 0;
+    private final String SYSTEM_SETTINGS = "SYSTEM";
+
+	private int articlePos;
 	
 	private Time startTime;
 	private Time endTime;
 
 	private FeedSpeaker tts;
+	private Intent callingIntent;
 
 	private Button stopButton;
 	private Button skipButton;
@@ -57,8 +56,6 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 	private ProgressBar loadingIcon;
 
 	private TextView articleText;
-
-	private RssItem first;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +73,13 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 
 		// Initialize the speaker
 		tts = new FeedSpeaker(this, this);
+		final Activity activity = this;
+		
+		
+		callingIntent = getIntent();
+		articlePos = callingIntent.getIntExtra("ARTICLE_POSITION", 0);
+		
+		Log.d("rollon", "Got articlePos: " + articlePos);
 		
 		stopButton.setOnClickListener(new View.OnClickListener() {
 
@@ -91,14 +95,10 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 			
 			@Override
 			public void onClick(View v) {
-				// Increment position.
-				articlePos++;
-				
-				// If it is reading, stop it.
-				if ( tts != null ){
-					tts.stop();
-				}
-				
+			 // If it is reading, stop it.
+                if ( tts != null ){
+                    tts.stop();
+                }
 				
 			}
 		});
@@ -120,9 +120,8 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 			if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
 				Log.e("TTS", "This Language is not supported");
 			} else {
-				Intent callingIntent = getIntent();
 				String callingIntentData = callingIntent.getDataString();
-				getTextAndSpeak(callingIntentData);
+				getTextAndSpeak(callingIntentData, articlePos);
 			}
 
 		} else {
@@ -147,12 +146,13 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 		super.onDestroy();
 	}
 	
-	protected void getTextAndSpeak(String feedUrl) {
-		AsyncTask<URL, Integer, List<String>> task = new AsyncTask<URL, Integer, List<String>>() {
-
+	protected void getTextAndSpeak(String feedUrl, final int articlePosition) {
+		AsyncTask<URL, Integer, ArticleInfo> task = new AsyncTask<URL, Integer, ArticleInfo>() {
+		    private int articlePos  = articlePosition;
 			@Override
-			protected ArrayList<String> doInBackground(URL... params) {
-				String content, title = "";
+			protected ArticleInfo doInBackground(URL... params) {
+				String content = "", title = "";
+				
 				try {
 					RssFeed feed = RssReader.read(params[0]);
 
@@ -162,31 +162,26 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 						Log.i("debug","Article Title: "  + x.getTitle().trim());
 					}
 					
-					// Check to make sure there is even another article, otherwise restart. :D
-					if ( articlePos >= items.size() ){
-						articlePos = 0;
+					if (articlePos >= items.size()) {
+					    articlePos = 0;
 					}
-					first = items.get(articlePos);
-					content = first.getContent();
-
-					Log.i("rollon", "content: " + content);
+					
+					RssItem item = null;
+					try {
+					    item = items.get(articlePos);
+					} catch (IndexOutOfBoundsException e) {
+					    Log.e("rollon", "Invalid article position given.", e);
+					    return new ArticleInfo("Error", "There was an error reading this article.  Please try another.");
+					}
+					content = item.getContent();
 
 					if (content == null || content.length() <= 0) {
 						Log.i("rollon", "Getting content from link...");
 						// Need to make our HTTP call
-						String argument = URLEncoder.encode(first.getLink(), "UTF-8");
-						URL apiUrl = new URL("http://rollonapp.com/article/" + argument);
-						HttpURLConnection conn = (HttpURLConnection) apiUrl.openConnection();
-						try {
-							InputStream in  = new BufferedInputStream(conn.getInputStream());
-							java.util.Scanner s = new java.util.Scanner(in).useDelimiter("\\A");
-							content = s.next();
-						} catch (IOException e) {
-							Log.e("rollon", "Could not get article text.", e);
-							content = "";
-						}
+						content = getReadableArticleText(item.getLink());
 					}
-					title = first.getTitle();
+					
+					title = item.getTitle();
 
 				} catch (SAXException e) {
 					Log.e("rollon", "Error playing", e);
@@ -206,15 +201,13 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 
 				Log.i("rollon", "Final content: " + content);
 
-				ArrayList<String> list = new ArrayList<String>(2);
-				list.add(title);
-				list.add(content);
-				return list;
+				
+				return new ArticleInfo(title, content);
 			}
 
-			protected void onPostExecute(List<String> list) {
-				String text = list.get(1);
-				String title = list.get(0);
+			protected void onPostExecute(ArticleInfo article) {
+				String text = article.getText();
+				String title = article.getTitle();
 
 				articleTitle.setText(title);
 
@@ -224,17 +217,6 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 
 				// Filter each request if the feed name is "UNTRACKED_CUSTOM_RSS" add to file
 				String finalFeedName = getIntent().getStringExtra("FEED_NAME");
-				if ( finalFeedName.equals("UNTRACKED_CUSTOM_RSS")){
-					finalFeedName = first.getFeed().getTitle();
-					SharedPreferences rssSettings = getSharedPreferences(RSS_FEED_SETTINGS, 0);
-					if ( rssSettings.contains(finalFeedName) ){
-						Toast.makeText(getApplicationContext(), "Sorry, the custom RSS feed is already present.", Toast.LENGTH_LONG).show();
-					} else {
-						SharedPreferences.Editor rssSettingsEditor = rssSettings.edit();
-						rssSettingsEditor.putString(finalFeedName, getIntent().getDataString());
-						rssSettingsEditor.commit();
-					}
-				}
 				
 				// Update the feed name title
 				feedName.setText(finalFeedName);
@@ -269,6 +251,54 @@ public class RssFeedReaderActivity extends Activity implements TextToSpeech.OnIn
 		// Commit the changes for persistence
 		systemSettingsEditor.putInt("TIME_SAVED", tempTime);
 		systemSettingsEditor.apply();
+	}
+	
+	protected String getReadableArticleText(String articleUrl) {
+	    String text = "";
+	    
+        try {
+            String argument = URLEncoder.encode(articleUrl, "UTF-8");
+            URL apiUrl = new URL(ROLLONAPP_API_ROOT + argument);
+            HttpURLConnection conn = (HttpURLConnection) apiUrl.openConnection();
+            InputStream in  = new BufferedInputStream(conn.getInputStream());
+            java.util.Scanner s = new java.util.Scanner(in).useDelimiter("\\A");
+            text = s.next();
+        } catch (IOException e) {
+            Log.e("rollon", "Could not get article text.", e);
+        }
+	    
+	    return text;
+	}
+	
+	/**
+	 * Stores information about the Article to be read, used to pass title and text around
+	 * inside of AsyncTask, rather than using an ArrayList.
+	 *
+	 */
+	private class ArticleInfo {
+	    private String title, text;
+	    
+	    public ArticleInfo(String title, String text) {
+	        this.title = title;
+	        this.text = text;
+	    }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+	    
 	}
 
 }
