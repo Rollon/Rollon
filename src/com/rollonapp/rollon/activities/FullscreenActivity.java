@@ -1,10 +1,5 @@
 package com.rollonapp.rollon.activities;
 
-import com.rollonapp.rollon.R;
-import com.rollonapp.rollon.R.id;
-import com.rollonapp.rollon.R.layout;
-import com.rollonapp.rollon.util.SystemUiHider;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
@@ -12,6 +7,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.rollonapp.rollon.R;
+import com.rollonapp.rollon.util.SystemUiHider;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.

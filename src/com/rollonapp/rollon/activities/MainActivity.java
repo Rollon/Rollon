@@ -1,9 +1,7 @@
 package com.rollonapp.rollon.activities;
 
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -29,7 +27,6 @@ import com.rollonapp.rollon.feeds.FeedRepository;
 
 public class MainActivity extends Activity {
 
-	private final String RSS_FEED_SETTINGS = "RSS_FEED";
 	private final String SYSTEM_SETTINGS = "SYSTEM";
 	
     @Override
