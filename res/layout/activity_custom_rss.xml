@@ -4,26 +4,36 @@
     android:layout_height="match_parent"
     tools:context=".CustomRssActivity" >
 
-    <Button
-        android:id="@+id/listenButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/inputFeed"
-        android:text="Listen" />
-
     <EditText
-        android:id="@+id/inputFeed"
+        android:id="@+id/feedUrl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:ems="10"
-        android:text="http://www.food.com/rss?" >
+        android:hint="@string/feedUrl"
+        android:inputType="textUri" >
 
         <requestFocus />
     </EditText>
+
+    <Button
+        android:id="@+id/saveFeedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:text="@string/save" />
+
+    <Button
+        android:id="@+id/previewFeeedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/saveFeedButton"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:text="@string/preview" />
 
 </RelativeLayout>

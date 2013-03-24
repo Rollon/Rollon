@@ -16,5 +16,8 @@
     <string name="skip">Skip</string>
     <string name="title_activity_process_rss">Process Rss</string>
     <string name="processingRss">Processing RSS...</string>
+    <string name="feedUrl">Feed URL</string>
+    <string name="preview">Preview</string>
+    <string name="save">Save</string>
 
 </resources>
