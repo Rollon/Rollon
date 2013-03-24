@@ -13,17 +13,11 @@ import com.rollonapp.rollon.R;
 
 public class CustomRssActivity extends Activity {
 
-	private EditText inputFeed;
-	private Button listenButton;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_custom_rss);
 
-		// Collect form elements
-		listenButton = (Button) findViewById(R.id.listenButton);
-		inputFeed = (EditText) findViewById(R.id.inputFeed);
 	}
 
 
