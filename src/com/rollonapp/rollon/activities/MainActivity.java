@@ -49,7 +49,7 @@ public class MainActivity extends Activity {
         	systemSettingsEditor.commit();
         	
         	// Set up some initial RSS Feed Values
-        	FeedRepository repo = new FeedRepository(this);
+        	FeedRepository repo = FeedRepository.getInstance(this);
         	List<Feed> feeds = repo.getFeeds();
         	// Read the file contents into a map for easier list management
     		try {

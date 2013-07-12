@@ -39,7 +39,7 @@ public class FeedsActivity extends Activity {
 		setContentView(R.layout.activity_feeds);
 
 		// Populate the feed list to display on the menu screen.
-		FeedRepository repo = new FeedRepository(this);
+		FeedRepository repo = FeedRepository.getInstance(this);
 		List<Feed> repoFeeds = repo.getFeeds();
 	
 		feeds = repoFeeds.toArray(new Feed[0]);

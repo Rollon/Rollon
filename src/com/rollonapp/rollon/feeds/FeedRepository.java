@@ -16,8 +16,17 @@ public class FeedRepository {
 
     private Context context;
     private List<Feed> feeds;
+    private static FeedRepository singleton = null;
+    
+    public static FeedRepository getInstance(Context context) {
+        if (singleton == null) {
+            singleton = new FeedRepository(context);
+        }
+        
+        return singleton;
+    }
 
-    public FeedRepository(Context context) {
+    private FeedRepository(Context context) {
         this.context = context;
         feeds = readFromFile();
     }

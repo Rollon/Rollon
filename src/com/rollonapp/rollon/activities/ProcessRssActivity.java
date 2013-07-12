@@ -21,6 +21,7 @@ import android.view.Menu;
 import android.widget.Toast;
 
 import com.rollonapp.rollon.R;
+import com.rollonapp.rollon.api.RollonApi;
 
 public class ProcessRssActivity extends Activity {
     
@@ -61,21 +62,7 @@ public class ProcessRssActivity extends Activity {
 
         @Override
         protected List<RssItem> doInBackground(Void... params) {
-            // TODO: Parse RSS Feed URL for articles
-            RssFeed feed;
-            ArrayList<RssItem> items = null;
-            try {
-                feed = RssReader.read(new URL(url));
-                items = feed.getRssItems();
-            } catch (MalformedURLException e) {
-               Log.e(TAG, "Bad URL", e);
-            } catch (SAXException e) {
-                Log.e(TAG, "Bad Rss Feed", e);
-            } catch (IOException e) {
-                Log.e(TAG, "Something Bad Happened", e);
-            }
-
-            return items;
+            return RollonApi.getFeedArticles(url);
         }
 
         @Override

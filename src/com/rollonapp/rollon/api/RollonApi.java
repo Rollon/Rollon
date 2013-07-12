@@ -4,9 +4,18 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+
+import nl.matshofman.saxrssreader.RssFeed;
+import nl.matshofman.saxrssreader.RssItem;
+import nl.matshofman.saxrssreader.RssReader;
+
+import org.xml.sax.SAXException;
 
 import android.util.Log;
 
@@ -37,5 +46,47 @@ public class RollonApi {
         }
         
         return text;
+    }
+    
+    /**
+     * Given a url to an RSS feed, returns a list of the entries in it.
+     * @param url The URL to the feed.
+     * @return The entries in the feed.
+     */
+    public static List<RssItem> getFeedArticles(String url) {
+        RssFeed feed;
+        List<RssItem> items = new ArrayList<RssItem>();
+        try {
+            feed = RssReader.read(new URL(url));
+            items = feed.getRssItems();
+        } catch (MalformedURLException e) {
+           Log.e(TAG, "Bad URL", e);
+        } catch (SAXException e) {
+            Log.e(TAG, "Bad Rss Feed", e);
+        } catch (IOException e) {
+            Log.e(TAG, "Something Bad Happened", e);
+        }
+
+        return items;
+    }
+    
+    /**
+     * Returns the full RssFeed object for the given URL.
+     * @param url The URL of the feed.
+     * @return The RssFeed object
+     */
+    public static RssFeed getFeed(String url) {
+        RssFeed feed = null;
+        try {
+            feed = RssReader.read(new URL(url));
+        } catch (MalformedURLException e) {
+           Log.e(TAG, "Bad URL", e);
+        } catch (SAXException e) {
+            Log.e(TAG, "Bad Rss Feed", e);
+        } catch (IOException e) {
+            Log.e(TAG, "Something Bad Happened", e);
+        }
+
+        return feed;
     }
 }
